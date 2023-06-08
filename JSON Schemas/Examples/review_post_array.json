@@ -1,0 +1,5 @@
+[
+    {"$schema": "./../review_schema.json", "filmId": 2, "reviewerId": 3}, 
+    {                                      "filmId": 2, "reviewerId": 4}, 
+    {                                      "filmId": 2, "reviewerId": 5}  
+]
