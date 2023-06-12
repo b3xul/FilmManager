@@ -16,7 +16,8 @@
     }, 
     "invitationStatus": {
       "enum": ["PENDING", "ACCEPTED", "REFUSED"], 
-      "default": "PENDING"
+      "default": "PENDING", 
+      "description": "status of the review invitation"
     }
   }, 
   "required": ["filmId", "reviewerId", "invitationStatus"]

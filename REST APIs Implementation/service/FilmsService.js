@@ -13,20 +13,20 @@ var constants = require('../utils/constants.js');
  * Output:
  * - the created film
  **/
- exports.createFilm = function(film, owner) {
+exports.createFilm = function (film, owner) {
     return new Promise((resolve, reject) => {
-  
-      const sql = 'INSERT INTO films(title, owner, private, watchDate, rating, favorite) VALUES(?,?,?,?,?,?)';
-      db.run(sql, [film.title, owner, film.private, film.watchDate, film.rating, film.favorite], function(err) {
-          if (err) {
-              reject(err);
-          } else {
-              var createdFilm = new Film(this.lastID, film.title, owner, film.private, film.watchDate, film.rating, film.favorite);
-              resolve(createdFilm);
-          }
-      });
-  });
-  }
+
+        const sql = 'INSERT INTO films(title, owner, private, watchDate, rating, favorite) VALUES(?,?,?,?,?,?)';
+        db.run(sql, [film.title, owner, film.private, film.watchDate, film.rating, film.favorite], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                var createdFilm = new Film(this.lastID, film.title, owner, film.private, film.watchDate, film.rating, film.favorite);
+                resolve(createdFilm);
+            }
+        });
+    });
+};
 
 
 /**
@@ -39,7 +39,7 @@ var constants = require('../utils/constants.js');
  * - the requested film
  * 
  **/
- exports.getSinglePrivateFilm = function(filmId, owner) {
+exports.getSinglePrivateFilm = function (filmId, owner) {
     return new Promise((resolve, reject) => {
         const sql1 = "SELECT id as fid, title, owner, private, watchDate, rating, favorite FROM films WHERE id = ?";
         db.all(sql1, [filmId], (err, rows) => {
@@ -47,9 +47,9 @@ var constants = require('../utils/constants.js');
                 reject(err);
             else if (rows.length === 0)
                 reject(404);
-            else if (rows[0].private == 0)    
+            else if (rows[0].private == 0)
                 reject(404);
-            else if (rows[0].owner == owner){
+            else if (rows[0].owner == owner) {
                 var film = createFilm(rows[0]);
                 resolve(film);
             }
@@ -57,7 +57,7 @@ var constants = require('../utils/constants.js');
                 reject(403);
         });
     });
-  }
+};
 
 
 /**
@@ -71,9 +71,9 @@ var constants = require('../utils/constants.js');
  * - no response expected for this operation
  * 
  **/
- exports.updateSinglePrivateFilm = function(film, filmId, owner) {
+exports.updateSinglePrivateFilm = function (film, filmId, owner) {
     return new Promise((resolve, reject) => {
-  
+
         const sql1 = "SELECT owner, private FROM films f WHERE f.id = ?";
         db.all(sql1, [filmId], (err, rows) => {
             if (err)
@@ -81,44 +81,44 @@ var constants = require('../utils/constants.js');
             else if (rows.length === 0)
                 reject(404);
             else if (rows[0].private == 0)
-                reject(409)
-            else if(owner != rows[0].owner) {
+                reject(409);
+            else if (owner != rows[0].owner) {
                 reject(403);
             }
             else {
 
-              var sql3 = 'UPDATE films SET title = ?';
-              var parameters = [film.title];
-              sql3 = sql3.concat(', private = ?');
-              parameters.push(film.private);
-              if(film.watchDate != undefined){
-                sql3 = sql3.concat(', watchDate = ?');
-                parameters.push(film.watchDate);
-              } 
-              if(film.rating != undefined){
-                  sql3 = sql3.concat(', rating = ?');
-                  parameters.push(film.rating);
-              } 
-              if(film.favorite != undefined){
-                  sql3 = sql3.concat(', favorite = ?');
-                  parameters.push(film.favorite);
-              } 
-              sql3 = sql3.concat(' WHERE id = ?');
-              parameters.push(filmId);
-  
-              db.run(sql3, parameters, function(err) {
-                if (err) {
-                reject(err);
-                } else {
-                resolve(null);
-              }
-             })
+                var sql3 = 'UPDATE films SET title = ?';
+                var parameters = [film.title];
+                sql3 = sql3.concat(', private = ?');
+                parameters.push(film.private);
+                if (film.watchDate != undefined) {
+                    sql3 = sql3.concat(', watchDate = ?');
+                    parameters.push(film.watchDate);
+                }
+                if (film.rating != undefined) {
+                    sql3 = sql3.concat(', rating = ?');
+                    parameters.push(film.rating);
+                }
+                if (film.favorite != undefined) {
+                    sql3 = sql3.concat(', favorite = ?');
+                    parameters.push(film.favorite);
+                }
+                sql3 = sql3.concat(' WHERE id = ?');
+                parameters.push(filmId);
+
+                db.run(sql3, parameters, function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(null);
+                    }
+                });
             }
         });
     });
-  }
-  
-  
+};
+
+
 /**
  * Delete a private film having filmId as ID
  *
@@ -128,7 +128,7 @@ var constants = require('../utils/constants.js');
  * Output:
  * - no response expected for this operation
  **/
- exports.deleteSinglePrivateFilm = function(filmId, owner) {
+exports.deleteSinglePrivateFilm = function (filmId, owner) {
     return new Promise((resolve, reject) => {
         const sql1 = "SELECT owner FROM films f WHERE f.id = ? AND f.private = 1";
         db.all(sql1, [filmId], (err, rows) => {
@@ -136,22 +136,22 @@ var constants = require('../utils/constants.js');
                 reject(err);
             else if (rows.length === 0)
                 reject(404);
-            else if(owner != rows[0].owner) {
+            else if (owner != rows[0].owner) {
                 reject(403);
             }
             else {
                 const sql3 = 'DELETE FROM films WHERE id = ?';
                 db.run(sql3, [filmId], (err) => {
                     if (err)
-                         reject(err);
-                     else
+                        reject(err);
+                    else
                         resolve(null);
-                })
+                });
             }
         });
     });
-  }
-  
+};
+
 
 /**
  * Retrieve the public film having film Id as ID
@@ -162,9 +162,10 @@ var constants = require('../utils/constants.js');
  * - the requested public film
  * 
  **/
- exports.getSinglePublicFilm = function(filmId) {
+exports.getSinglePublicFilm = function (filmId) {
     return new Promise((resolve, reject) => {
         const sql = "SELECT id as fid, title, owner, private, watchDate, rating, favorite FROM films WHERE id = ?";
+
         db.all(sql, [filmId], (err, rows) => {
             if (err)
                 reject(err);
@@ -178,8 +179,8 @@ var constants = require('../utils/constants.js');
             }
         });
     });
-  }
-  
+};
+
 
 /**
  * Update a public film
@@ -192,9 +193,9 @@ var constants = require('../utils/constants.js');
  * - no response expected for this operation
  * 
  **/
- exports.updateSinglePublicFilm = function(film, filmId, owner) {
+exports.updateSinglePublicFilm = function (film, filmId, owner) {
     return new Promise((resolve, reject) => {
-  
+
         const sql1 = "SELECT owner, private FROM films f WHERE f.id = ?";
         db.all(sql1, [filmId], (err, rows) => {
             if (err)
@@ -203,29 +204,29 @@ var constants = require('../utils/constants.js');
                 reject(404);
             else if (rows[0].private == 1)
                 reject(409);
-            else if(owner != rows[0].owner) {
+            else if (owner != rows[0].owner) {
                 reject(403);
             }
             else {
-              var sql3 = 'UPDATE films SET title = ?';
-              var parameters = [film.title];
-              sql3 = sql3.concat(', private = ?');
-              parameters.push(film.private);
-              sql3 = sql3.concat(' WHERE id = ?');
-              parameters.push(filmId);
-  
-              db.run(sql3, parameters, function(err) {
-                if (err) {
-                reject(err);
-                } else {
-                resolve(null);
-              }
-             })
+                var sql3 = 'UPDATE films SET title = ?';
+                var parameters = [film.title];
+                sql3 = sql3.concat(', private = ?');
+                parameters.push(film.private);
+                sql3 = sql3.concat(' WHERE id = ?');
+                parameters.push(filmId);
+
+                db.run(sql3, parameters, function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(null);
+                    }
+                });
             }
         });
     });
-  }
-  
+};
+
 
 
 /**
@@ -237,96 +238,82 @@ var constants = require('../utils/constants.js');
  * Output:
  * - no response expected for this operation
  **/
- exports.deleteSinglePublicFilm = function(filmId, owner) {
-  return new Promise((resolve, reject) => {
-      const sql1 = "SELECT owner FROM films f WHERE f.id = ?";
-      db.all(sql1, [filmId], (err, rows) => {
-          if (err)
-              reject(err);
-          else if (rows.length === 0)
-              reject(404);
-          else if(rows[0].private == 1)
-            reject(404);
-          else if(owner != rows[0].owner) {
-              reject(403);
-          }
-          else {
-              const sql2 = 'DELETE FROM reviews WHERE filmId = ?';
-              db.run(sql2, [filmId], (err) => {
-                  if (err)
-                      reject(err);
-                  else {
-                      const sql3 = 'DELETE FROM films WHERE id = ?';
-                      db.run(sql3, [filmId], (err) => {
-                          if (err)
-                              reject(err);
-                          else
-                              resolve(null);
-                      })
-                  }
-              })
-          }
-      });
-  });
-}
+exports.deleteSinglePublicFilm = function (filmId, owner) {
+    return new Promise((resolve, reject) => {
+        const sql1 = "SELECT owner FROM films f WHERE f.id = ?";
+        db.all(sql1, [filmId], (err, rows) => {
+            if (err)
+                reject(err);
+            else if (rows.length === 0)
+                reject(404);
+            else if (rows[0].private == 1)
+                reject(404);
+            else if (owner != rows[0].owner) {
+                reject(403);
+            }
+            else {
+                const sql2 = 'DELETE FROM reviews WHERE filmId = ?';
+                db.run(sql2, [filmId], (err) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        const sql3 = 'DELETE FROM films WHERE id = ?';
+                        db.run(sql3, [filmId], (err) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(null);
+                        });
+                    }
+                });
+            }
+        });
+    });
+};
 
 
 
 /**
  * Retrieve the public films
- * 
- * Input: 
- * - req: the request of the user
- * Output:
- * - list of the public films
- * 
+ * The public films (i.e., the films that are visible for all the users of the service) are retrieved. This operation does not require authentication. A pagination mechanism is implemented to limit the size of messages.
+ *
+ * pageNo Integer The id of the requested page (if absent, the first page is returned) (optional)
+ * returns PaginatedFilms
  **/
- exports.getPublicFilms = function(req) {
-  return new Promise((resolve, reject) => {
-
-    var sql = "SELECT f.id as fid, f.title, f.owner, f.private, f.watchDate, f.rating, f.favorite, c.total_rows FROM films f, (SELECT count(*) total_rows FROM films l WHERE l.private=0) c WHERE  f.private = 0 "
-    var limits = getPagination(req);
-    if (limits.length != 0) sql = sql + " LIMIT ?,?";
-
-    db.all(sql, limits, (err, rows) => {
-        if (err) {
-            reject(err);
-        } else {
-            let films = rows.map((row) => createFilm(row));
-            resolve(films);
-        }
-    });
-  });
-}
-
-/**
- * Retrieve the public films for which the user has received a review invitation
- * 
- * Input: 
- * - req: the request of the user
- * Output:
- * - list of the public films for which the user has received a review invitation
- * 
- **/
- exports.getInvitedFilms = function(req) {
+exports.getPublicFilms = function (pageNo) {
     return new Promise((resolve, reject) => {
-  
-      var sql = "SELECT f.id as fid, f.title, f.owner, f.private, f.watchDate, f.rating, f.favorite, c.total_rows FROM films f, reviews r, (SELECT count(*) total_rows FROM films f2, reviews r2 WHERE f2.private=0 AND f2.id = r2.filmId AND r2.reviewerId = ?) c WHERE  f.private = 0 AND f.id = r.filmId AND r.reviewerId = ?"
-      var limits = getPagination(req);
-      if (limits.length != 0) sql = sql + " LIMIT ?,?";
-      limits.unshift(req.user.id);
-      limits.unshift(req.user.id);
-  
-      db.all(sql, limits, (err, rows) => {
-          if (err) {
-              reject(err);
-          } else {
-              let films = rows.map((row) => createFilm(row));
-              resolve(films);
-          }
-      });
+
+        if (!pageNo || pageNo <= 0) {
+            pageNo = 1;
+        }
+        pageNo = Number(pageNo);
+        const [offset, row_count] = getPagination(pageNo);
+        var sql = "SELECT f.id as fid, f.title, f.owner, f.private, f.watchDate, f.rating, f.favorite, c.total_rows FROM films f, (SELECT count(*) total_rows FROM films l WHERE l.private=0) c WHERE f.private = 0 LIMIT ?, ?";
+        db.all(sql, offset, row_count, (err, rows) => {
+            if (err) {
+                reject(err);
+            } else if (rows.length === 0)
+                reject(404);
+            else {
+                let films = rows.map((row) => createFilm(row));
+                const totalFilms = rows[0].total_rows;
+                var lastPage = Math.ceil(totalFilms / constants.ROW_COUNT);
+
+                var response = {
+                    currentPage: pageNo,
+                    totalPages: lastPage,
+                    totalItems: totalFilms
+                };
+                response["films"] = (pageNo <= lastPage) ? films : [];
+
+                if (pageNo < lastPage) {
+                    response["next"] = "/api/films/public?pageNo=" + (pageNo + 1);
+                }
+                resolve(response);
+            }
+        });
     });
-  }
+};
 
 /**
  * Retrieve the private films of an user with ID userId
@@ -337,115 +324,123 @@ var constants = require('../utils/constants.js');
  * - list of the public films
  * 
  **/
- exports.getPrivateFilms = function(req) {
+exports.getPrivateFilms = function (pageNo, userId) {
     return new Promise((resolve, reject) => {
-  
-        var sql = "SELECT f.id as fid, f.title, f.owner, f.private, f.watchDate, f.rating, f.favorite, c.total_rows FROM films f, (SELECT count(*) total_rows FROM films l WHERE l.private=1 AND owner = ?) c WHERE  f.private = 1 AND owner = ?"
-        var limits = getPagination(req);
-        if (limits.length != 0) sql = sql + " LIMIT ?,?";
-        var parameters = [req.user.id, req.user.id];
-        parameters = parameters.concat(limits);
-        db.all(sql, parameters, (err, rows) => {
+
+        if (!pageNo || pageNo <= 0) {
+            pageNo = 1;
+        }
+        pageNo = Number(pageNo);
+        const [offset, row_count] = getPagination(pageNo);
+        var sql = "SELECT f.id as fid, f.title, f.owner, f.private, f.watchDate, f.rating, f.favorite, c.total_rows FROM films f, (SELECT count(*) total_rows FROM films l WHERE l.private=1 AND owner = ?) c WHERE  f.private = 1 AND owner = ? LIMIT ?, ?";
+        var sql_params = [userId, userId, offset, row_count];
+        db.all(sql, sql_params, (err, rows) => {
             if (err) {
                 reject(err);
-            } else {
+            } else if (rows.length === 0)
+                reject(404);
+            else {
                 let films = rows.map((row) => createFilm(row));
-                resolve(films);
+                const totalFilms = rows[0].total_rows;
+                var lastPage = Math.ceil(totalFilms / constants.ROW_COUNT);
+
+                var response = {
+                    currentPage: pageNo,
+                    totalPages: lastPage,
+                    totalItems: totalFilms
+                };
+                response["films"] = (pageNo <= lastPage) ? films : [];
+
+                if (pageNo < lastPage) {
+                    response["next"] = "/api/films/private?pageNo=" + (pageNo + 1);
+                }
+                resolve(response);
             }
         });
     });
-  }
+};
 
 /**
- * Retrieve the number of public films 
- * 
- * Input: 
- * - none
- * Output:
- * - total number of public films
- * 
+ * Retrieve the public films that the logged-in user has been invited to review, possibly filtered by the review's invitation Status
+ * The public films that the logged-in user has been invited to review are retrieved, possibly filtered by the review's invitation Status. A pagination mechanism is implemented to limit the size of messages.
+ *
+ * invitationStatus String The invitation Status used to filter the reviews (if absent, all reviews are considered) (optional)
+ * pageNo Integer The id of the requested page (if absent, the first page is returned) (optional)
+ * returns inline_response_200
  **/
- exports.getPublicFilmsTotal = function() {
-  return new Promise((resolve, reject) => {
-      var sqlNumOfFilms = "SELECT count(*) total FROM films f WHERE private = 0 ";
-      db.get(sqlNumOfFilms, [], (err, size) => {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(size.total);
-          }
-      });
-  });
-}
-
-/**
- * Retrieve the number of public films for which the user has received a review invitation
- * 
- * Input: 
- * - none
- * Output:
- * - total number of public films for which the user has received a review invitation
- * 
- **/
- exports.getInvitedFilmsTotal = function(reviewerId) {
+exports.getInvitedFilms = function (invitationStatusFilter, pageNo, reviewerId) {
     return new Promise((resolve, reject) => {
-        var sqlNumOfFilms = "SELECT count(*) total FROM films f, reviews r WHERE  f.private = 0 AND f.id = r.filmId AND r.reviewerId = ? ";
-        db.get(sqlNumOfFilms, [reviewerId], (err, size) => {
+
+
+        var sql_params = [reviewerId];
+
+        var sql_count = "SELECT count(*) total_rows FROM films f2, reviews r2 WHERE f2.private=0 AND f2.id = r2.filmId AND r2.reviewerId = ? "; //1
+        if (invitationStatusFilter) {
+            sql_count = sql_count + " AND r2.invitationStatus = ? "; //2
+            sql_params.push(invitationStatusFilter);
+        }
+        var sql = "SELECT f.id as fid, f.title, f.owner, f.private, f.watchDate, f.rating, f.favorite, c.total_rows FROM films f, reviews r, (" + sql_count + ") c WHERE f.private = 0 AND f.id = r.filmId AND r.reviewerId = ? "; //3
+        sql_params.push(reviewerId);
+        if (invitationStatusFilter) {
+            sql = sql + " AND r.invitationStatus = ? "; //4
+            sql_params.push(invitationStatusFilter);
+        }
+
+        if (!pageNo || pageNo <= 0) {
+            pageNo = 1;
+        }
+        pageNo = Number(pageNo);
+        const [offset, row_count] = getPagination(pageNo);
+        sql = sql + " LIMIT ?,?"; //5,6
+        sql_params.push(offset);
+        sql_params.push(row_count);
+
+        db.all(sql, sql_params, (err, rows) => {
             if (err) {
                 reject(err);
-            } else {
-                resolve(size.total);
+            } else if (rows.length === 0)
+                reject(404);
+            else {
+                let films = rows.map((row) => createFilm(row));
+                const totalFilms = rows[0].total_rows;
+                var lastPage = Math.ceil(totalFilms / constants.ROW_COUNT);
+
+                var response = {
+                    currentPage: pageNo,
+                    totalPages: lastPage,
+                    totalItems: totalFilms
+                };
+                response["films"] = (pageNo <= lastPage) ? films : [];
+
+                if (pageNo < lastPage) {
+                    var next = "/api/films/public/invited?";
+                    if (invitationStatusFilter) {
+                        next = next + "invitationStatus=" + invitationStatusFilter + "&";
+                    }
+                    next = next + "pageNo=" + (pageNo + 1);
+                    response["next"] = next;
+                }
+                resolve(response);
             }
         });
     });
-  }
-
-/**
- * Retrieve the number of private films of an user with ID userId
- * 
- * Input: 
- * - owner: the userId
- * Output:
- * - total number of public films
- * 
- **/
- exports.getPrivateFilmsTotal = function(userId) {
-    return new Promise((resolve, reject) => {
-        var sqlNumOfFilms = "SELECT count(*) total FROM films f WHERE private = 1 AND owner = ? ";
-        db.get(sqlNumOfFilms, [userId], (err, size) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(size.total);
-            }
-        });
-    });
-  }
-
-
-
+};
 
 /**
  * Utility functions
  */
- const getPagination = function(req) {
-  var pageNo = parseInt(req.query.pageNo);
-  var size = parseInt(constants.OFFSET);
-  var limits = [];
-  if (req.query.pageNo == null) {
-      pageNo = 1;
-  }
-  limits.push(size * (pageNo - 1));
-  limits.push(size);
-  return limits;
-}
+const getPagination = function (pageNo) {
+    const row_count = parseInt(constants.ROW_COUNT); // =2
+    const offset = row_count * (pageNo - 1);  // page <=1 -> offset=0 | page=1->offset=2*1 ... 
+    return [offset, row_count];
+};
 
-const createFilm = function(row) {
-  var privateFilm = (row.private === 1) ? true : false;
-  var favoriteFilm;
-  if(row.favorite == null) favoriteFilm = undefined;
-  else favoriteFilm = (row.favorite === 1) ? true : false;
-  return new Film(row.fid, row.title, row.owner, privateFilm, row.watchDate, row.rating, favoriteFilm);
+const createFilm = function (row) {
+    var privateFilm = (row.private === 1) ? true : false;
+    var favoriteFilm;
+    if (row.favorite == null) favoriteFilm = undefined;
+    else favoriteFilm = (row.favorite === 1) ? true : false;
+    return new Film(row.fid, row.title, row.owner, privateFilm, row.watchDate, row.rating, favoriteFilm);
 }
 
 

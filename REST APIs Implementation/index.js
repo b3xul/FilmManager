@@ -23,40 +23,43 @@ var reviewController = require(path.join(__dirname, 'controllers/ReviewsControll
 var corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
-  };
-  
-  
+};
+
+
 /*** Passport ***/
-  
+
 // Serializing in the session the user object given from LocalStrategy(verify).
 passport.serializeUser(function (user, cb) { // this user is id + username + name 
     cb(null, user);
 });
-  
+
 // Starting from the data in the session, we extract the current (logged-in) user.
 passport.deserializeUser(function (user, cb) { // this user is id + email + name 
     // if needed, we can do extra check here (e.g., double check that the user is still in the database, etc.)
     // e.g.: return userDao.getUserById(id).then(user => cb(null, user)).catch(err => cb(err, null));
     return cb(null, user); // this will be available in req.user
 });
-  
-  
+
+
 /*** Defining authentication verification middleware ***/
-  
+
 const isLoggedIn = (req, res, next) => {
-if(req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         return next();
     }
-    return res.status(401).json({error: 'Not authorized'});
-}
+    return res.status(401).json({ error: 'Not authorized' });
+};
 
 /*** Defining JSON validator middleware ***/
 
 var filmSchema = JSON.parse(fs.readFileSync(path.join('.', 'json_schemas', 'film_schema.json')).toString());
 var userSchema = JSON.parse(fs.readFileSync(path.join('.', 'json_schemas', 'user_schema.json')).toString());
-var reviewSchema = JSON.parse(fs.readFileSync(path.join('.', 'json_schemas', 'review_schema.json')).toString());
+var reviewSchema_public = JSON.parse(fs.readFileSync(path.join('.', 'json_schemas', 'review_schema_public.json')).toString());
+var reviewSchema_post_array = JSON.parse(fs.readFileSync(path.join('.', 'json_schemas', 'review_schema_post_array.json')).toString());
+var reviewSchema_invitationStatus = JSON.parse(fs.readFileSync(path.join('.', 'json_schemas', 'review_schema_invitationStatus.json')).toString());
+
 var validator = new Validator({ allErrors: true });
-validator.ajv.addSchema([userSchema, filmSchema, reviewSchema]);
+validator.ajv.addSchema([userSchema, filmSchema, reviewSchema_public, reviewSchema_post_array, reviewSchema_invitationStatus]);
 const addFormats = require('ajv-formats').default;
 addFormats(validator.ajv);
 var validate = validator.validate;
@@ -80,12 +83,18 @@ app.use(session({
     secret: "shhhhh... it's a secret!",
     resave: false,
     saveUninitialized: false,
-  }));
-  app.use(passport.authenticate('session'));
+}));
+app.use(passport.authenticate('session'));
 
 
 //Route methods
 
+//New endpoints
+app.get('/api/films/public/:filmId/reviews/invitationStatus', isLoggedIn, reviewController.getReviewsInvitationStatus);
+app.get('/api/films/public/:filmId/reviews/:reviewerId/invitationStatus', isLoggedIn, reviewController.getSingleReviewInvitationStatus);
+app.patch('/api/films/public/:filmId/reviews/:reviewerId', isLoggedIn, validate({ body: reviewSchema_invitationStatus }), reviewController.updateSingleReviewInvitationStatus);
+
+//Old endpoints
 app.get('/api/films/public', filmController.getPublicFilms);
 app.post('/api/films', isLoggedIn, validate({ body: filmSchema }), filmController.createFilm);
 app.get('/api/films/private/:filmId', isLoggedIn, filmController.getSinglePrivateFilm);
@@ -96,24 +105,25 @@ app.get('/api/films/public/:filmId', filmController.getSinglePublicFilm);
 app.put('/api/films/public/:filmId', isLoggedIn, validate({ body: filmSchema }), filmController.updateSinglePublicFilm);
 app.delete('/api/films/public/:filmId', isLoggedIn, filmController.deleteSinglePublicFilm);
 app.get('/api/films/public/:filmId/reviews', reviewController.getFilmReviews);
-app.post('/api/films/public/:filmId/reviews', isLoggedIn, reviewController.issueFilmReview);
+app.post('/api/films/public/:filmId/reviews', isLoggedIn, validate({ body: reviewSchema_post_array }), reviewController.issueFilmReview);
 app.get('/api/films/public/:filmId/reviews/:reviewerId', reviewController.getSingleReview);
-app.put('/api/films/public/:filmId/reviews/:reviewerId', isLoggedIn, reviewController.updateSingleReview);
+app.put('/api/films/public/:filmId/reviews/:reviewerId', isLoggedIn, validate({ body: reviewSchema_public }), reviewController.updateSingleReview);
 app.delete('/api/films/public/:filmId/reviews/:reviewerId', isLoggedIn, reviewController.deleteSingleReview);
 app.get('/api/users', isLoggedIn, userController.getUsers);
 app.post('/api/users/authenticator', userController.authenticateUser);
 app.get('/api/users/:userId', isLoggedIn, userController.getSingleUser);
 app.get('/api/films/private', isLoggedIn, filmController.getPrivateFilms);
 
+
 // Error handlers for validation and authentication errors
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     if (err instanceof ValidationError) {
         res.status(400).send(err);
     } else next(err);
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
         var authErrorObj = { errors: [{ 'param': 'Server', 'msg': 'Authorization error' }] };
         res.status(401).json(authErrorObj);
@@ -123,7 +133,7 @@ app.use(function(err, req, res, next) {
 
 // Initialize the Swagger middleware
 
-http.createServer(app).listen(serverPort, function() {
+http.createServer(app).listen(serverPort, function () {
     console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
     console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
 });

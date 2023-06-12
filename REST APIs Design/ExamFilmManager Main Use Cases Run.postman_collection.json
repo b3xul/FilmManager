@@ -1,0 +1,1272 @@
+{
+	"info": {
+		"_postman_id": "0c87fb85-6c5a-4826-a298-b7225c8ee434",
+		"name": "ExamFilmManager Main Use Cases Run",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27536989"
+	},
+	"item": [
+		{
+			"name": "User 1 logs in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"id\": 1,",
+							"    \"name\": \"User\",",
+							"    \"email\": \"user.dsp@polito.it\",",
+							"    \"self\": \"/api/users/1\"",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user.dsp@polito.it\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/authenticator?type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"authenticator"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 Invites other users (5 and 6) to review one of its public films (filmId 3)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=[",
+							"    {",
+							"        \"statusCode\": 201,",
+							"        \"content\": {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 5,",
+							"            \"completed\": false,",
+							"            \"self\": \"/api/films/public/3/reviews/5\",",
+							"            \"invitationStatus\": \"PENDING\"",
+							"        }",
+							"    },",
+							"    {",
+							"        \"statusCode\": 201,",
+							"        \"content\": {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 6,",
+							"            \"completed\": false,",
+							"            \"self\": \"/api/films/public/3/reviews/6\",",
+							"            \"invitationStatus\": \"PENDING\"",
+							"        }",
+							"    }",
+							"];",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"filmId\": 3,\n        \"reviewerId\": 5\n    },\n    {\n        \"filmId\": 3,\n        \"reviewerId\": 6\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 5 logs in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"id\": 5,",
+							"    \"name\": \"Beatrice\",",
+							"    \"email\": \"beatrice.golden@polito.it\",",
+							"    \"self\": \"/api/users/5\"",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"beatrice.golden@polito.it\",\n    \"password\": \"seagulls\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/authenticator?type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"authenticator"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 5 checks which films he has been invited to review with PENDING status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"currentPage\": 1,",
+							"    \"totalPages\": 1,",
+							"    \"totalItems\": 2,",
+							"    \"films\": [",
+							"        {",
+							"            \"id\": 6,",
+							"            \"title\": \"Spirited Away\",",
+							"            \"owner\": 5,",
+							"            \"private\": false,",
+							"            \"self\": \"/api/films/public/6\"",
+							"        },",
+							"        {",
+							"            \"id\": 3,",
+							"            \"title\": \"You Can (Not) Redo\",",
+							"            \"owner\": 1,",
+							"            \"private\": false,",
+							"            \"self\": \"/api/films/public/3\"",
+							"        }",
+							"    ]",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/invited?invitationStatus=PENDING",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"invited"
+					],
+					"query": [
+						{
+							"key": "invitationStatus",
+							"value": "PENDING"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 5 accepts the invitation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=null;",
+							"",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filmId\": 3,\n    \"reviewerId\": 5,\n    \"invitationStatus\": \"ACCEPTED\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 5 completes the review successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=null;",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filmId\": 3,\n    \"reviewerId\": 5,\n    \"completed\": true,\n    \"reviewDate\": \"2023-06-08\",\n    \"rating\": 7,\n    \"review\": \"Beautiful\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 logs in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={\"id\":6,\"name\":\"Arthur\",\"email\":\"arthur.pendragon@polito.it\",\"self\":\"/api/users/6\"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"arthur.pendragon@polito.it\",\n    \"password\": \"holygrail\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/authenticator?type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"authenticator"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 tries to update the review without accepting it first",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={ \"errors\": [ { \"param\": \"Server\", \"msg\": \"The review cannot be modified since it is not in ACCEPTED state\" } ] };",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\"filmId\": 3, \"reviewerId\": 6, \"completed\": true, \"reviewDate\": \"2023-06-08\", \"rating\": 6, \"review\": \"Not too bad\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 refuses the invitation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=null;",
+							"",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filmId\": 3,\n    \"reviewerId\": 6,\n    \"invitationStatus\": \"REFUSED\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 tries to update the review after having refused it",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={ \"errors\": [ { \"param\": \"Server\", \"msg\": \"The review cannot be modified since it is not in ACCEPTED state\" } ] };",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\"filmId\": 3, \"reviewerId\": 6, \"completed\": true, \"reviewDate\": \"2023-06-08\", \"rating\": 6, \"review\": \"Not too bad\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 logs in again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"id\": 1,",
+							"    \"name\": \"User\",",
+							"    \"email\": \"user.dsp@polito.it\",",
+							"    \"self\": \"/api/users/1\"",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user.dsp@polito.it\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/authenticator?type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"authenticator"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 checks all the statuses of the invitations sent for filmId 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"currentPage\": 2,",
+							"    \"totalPages\": 2,",
+							"    \"totalItems\": 4,",
+							"    \"reviews\": [",
+							"        {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 5,",
+							"            \"self\": \"/api/films/public/3/reviews/5\",",
+							"            \"invitationStatus\": \"ACCEPTED\"",
+							"        },",
+							"        {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 6,",
+							"            \"self\": \"/api/films/public/3/reviews/6\",",
+							"            \"invitationStatus\": \"REFUSED\"",
+							"        }",
+							"    ]",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/invitationStatus?pageNo=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"invitationStatus"
+					],
+					"query": [
+						{
+							"key": "pageNo",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 Invites user 6 again",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=[",
+							"    {",
+							"        \"statusCode\": 201,",
+							"        \"content\": {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 6,",
+							"            \"completed\": false,",
+							"            \"self\": \"/api/films/public/3/reviews/6\",",
+							"            \"invitationStatus\": \"PENDING\"",
+							"        }",
+							"    }",
+							"];",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"filmId\": 3,\n        \"reviewerId\": 6\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 logs in again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={\"id\":6,\"name\":\"Arthur\",\"email\":\"arthur.pendragon@polito.it\",\"self\":\"/api/users/6\"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"arthur.pendragon@polito.it\",\n    \"password\": \"holygrail\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/authenticator?type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"authenticator"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 this time accepts the invitation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=null;",
+							"",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filmId\": 3,\n    \"reviewerId\": 6,\n    \"invitationStatus\": \"ACCEPTED\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 completes the review successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// invitationStatus is included because he is the reviewer of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse=null;",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filmId\": 3, \"reviewerId\": 6, \"completed\": true, \"reviewDate\": \"2023-07-08\", \"rating\": 2, \"review\": \"Terrible\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 6 checks reviews for film 3 (invitationStatus not present)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// No invitationStatus because he is not the owner of the film",
+							"",
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"currentPage\": 2,",
+							"    \"totalPages\": 2,",
+							"    \"totalItems\": 4,",
+							"    \"reviews\": [",
+							"        {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 5,",
+							"            \"completed\": true,",
+							"            \"reviewDate\": \"2023-06-08\",",
+							"            \"rating\": 7,",
+							"            \"review\": \"Beautiful\",",
+							"            \"self\": \"/api/films/public/3/reviews/5\"",
+							"        },",
+							"        {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 6,",
+							"            \"completed\": true,",
+							"            \"reviewDate\": \"2023-07-08\",",
+							"            \"rating\": 2,",
+							"            \"review\": \"Terrible\",",
+							"            \"self\": \"/api/films/public/3/reviews/6\"",
+							"        }",
+							"    ]",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews?pageNo=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews"
+					],
+					"query": [
+						{
+							"key": "pageNo",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 logs in again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"id\": 1,",
+							"    \"name\": \"User\",",
+							"    \"email\": \"user.dsp@polito.it\",",
+							"    \"self\": \"/api/users/1\"",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user.dsp@polito.it\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/authenticator?type=login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"authenticator"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "login"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 checks reviews for film 3 (invitationStatus is included)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set the expected JSON response for this request",
+							"const desiredResponse={",
+							"    \"currentPage\": 2,",
+							"    \"totalPages\": 2,",
+							"    \"totalItems\": 4,",
+							"    \"reviews\": [",
+							"        {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 5,",
+							"            \"completed\": true,",
+							"            \"reviewDate\": \"2023-06-08\",",
+							"            \"rating\": 7,",
+							"            \"review\": \"Beautiful\",",
+							"            \"self\": \"/api/films/public/3/reviews/5\",",
+							"            \"invitationStatus\": \"ACCEPTED\"",
+							"        },",
+							"        {",
+							"            \"filmId\": 3,",
+							"            \"reviewerId\": 6,",
+							"            \"completed\": true,",
+							"            \"reviewDate\": \"2023-07-08\",",
+							"            \"rating\": 2,",
+							"            \"review\": \"Terrible\",",
+							"            \"self\": \"/api/films/public/3/reviews/6\",",
+							"            \"invitationStatus\": \"ACCEPTED\"",
+							"        }",
+							"    ]",
+							"};",
+							"    ",
+							"pm.collectionVariables.set(\"expectedResponse\",desiredResponse);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/films/public/3/reviews?pageNo=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"films",
+						"public",
+						"3",
+						"reviews"
+					],
+					"query": [
+						{
+							"key": "pageNo",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Get the expected response from the collection variable",
+					"const expectedResponse = pm.collectionVariables.get(\"expectedResponse\");",
+					"",
+					"if(expectedResponse && pm.response.text()){",
+					"    // Parse the response body as JSON",
+					"    const responseBodyJson = pm.response.json();",
+					"",
+					"    // Compare the response body with the expected values",
+					"    pm.test(\"Check JSON response\", () => {",
+					"    pm.expect(responseBodyJson).to.eql(expectedResponse);",
+					"    });",
+					"}",
+					"else{",
+					"    pm.test(\"Status code is 204\", function () {",
+					"        pm.response.to.have.status(204);",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "expectedResponse",
+			"value": ""
+		}
+	]
+}

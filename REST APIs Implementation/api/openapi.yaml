@@ -30,12 +30,18 @@ tags:
     description: the public film with ID filmId
   - name: "films/public/{filmId}/reviews"
     description: the reviews issued for the public film with ID filmId
+  - name: "films/public/{filmId}/reviews/invitationStatus"
+    description:
+      the invitation status of the reviews issued for the public film with
+      ID filmId
   - name: "films/public/{filmId}/reviews/{reviewerId}"
     description:
       the review issued to the user with ID reviewerId for the public film
       with ID filmId
-  - name: films/public/assignments
-    description: the assignments of review invitations to users
+  - name: "films/public/{filmId}/reviews/{reviewerId}/invitationStatus"
+    description:
+      the invitation status of the review issued to the user with ID reviewerId
+      for the public film with ID filmId
   - name: users
     description: the set of all the users
   - name: users/authenticator
@@ -275,14 +281,28 @@ paths:
       tags:
         - films/public/invited
       summary:
-        Retrieve the public films that the logged-in user has been invited
-        to review
+        "Retrieve the public films that the logged-in user has been invited\
+        \ to review, possibly filtered by the review's invitation Status"
       description:
-        The public films that the logged-in user has been invited to review
-        are retrieved. A pagination mechanism is implemented to limit the size of
-        messages.
+        "The public films that the logged-in user has been invited to review\
+        \ are retrieved, possibly filtered by the review's invitation Status. A pagination\
+        \ mechanism is implemented to limit the size of messages."
       operationId: getInvitedFilms
       parameters:
+        - name: invitationStatus
+          in: query
+          description:
+            "The invitation Status used to filter the reviews (if absent,\
+            \ all reviews are considered)"
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            enum:
+              - PENDING
+              - ACCEPTED
+              - REFUSED
         - name: pageNo
           in: query
           description: "The id of the requested page (if absent, the first page is returned)"
@@ -300,6 +320,9 @@ paths:
                 $ref: "#/components/schemas/inline_response_200"
         "401":
           description: Unauthorized
+          content: {}
+        "404":
+          description: Not found
           content: {}
         "500":
           description: Internal Server Error
@@ -433,12 +456,15 @@ paths:
       tags:
         - "films/public/{filmId}/reviews"
       summary:
-        Retrieve the list of all the reviews that have been issued/completed
-        for a film
+        "Retrieve the list of all the reviews that have been issued/completed\
+        \ for a film, possibly filtered by the invitation Status if the user is the\
+        \ film owner"
       description:
-        "All the reviews that have been issued/completed for the film with
-        ID filmId are retrieved. A pagination mechanism is implemented to limit the
-        size of messages. This operation does not require authentication. "
+        "All the reviews that have been issued/completed for the film with\
+        \ ID filmId are retrieved. If the requesting user is the owner of the film,\
+        \ he also sees the reviews invitationStatus, otherwise it is not shown. A\
+        \ pagination mechanism is implemented to limit the size of messages. This\
+        \ operation does not require authentication."
       operationId: getFilmReviews
       parameters:
         - name: filmId
@@ -450,6 +476,21 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: invitationStatus
+          in: query
+          description:
+            "The invitation Status used to filter the reviews (if absent,\
+            \ all reviews are considered). This query parameter only has effect for\
+            \ the film owner."
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            enum:
+              - PENDING
+              - ACCEPTED
+              - REFUSED
         - name: pageNo
           in: query
           description: "ID of the requested page (if absent, the first page is returned)'"
@@ -464,10 +505,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/inline_response_200_1"
-                x-content-type: application/json
+                $ref: "#/components/schemas/inline_response_200_1"
         "404":
           description: Not Found
           content: {}
@@ -496,23 +534,25 @@ paths:
             type: integer
             format: int64
       requestBody:
-        description: "the new film reviews, including the users to whom they are issued"
+        description:
+          "only the necessary parts of the new film reviews, including\
+          \ the users to whom they are issued"
         content:
           application/json:
             schema:
               type: array
               items:
-                $ref: "#/components/schemas/Review"
+                $ref: "#/components/schemas/Review_post"
         required: true
       responses:
-        "201":
-          description: Created
+        "207":
+          description: Multi-Status
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Review"
+                  $ref: "#/components/schemas/inline_response_207"
                 x-content-type: application/json
         "400":
           description: Bad Request
@@ -535,14 +575,83 @@ paths:
       security:
         - cookieAuth: []
       x-swagger-router-controller: FilmspublicfilmIdreviews
+  /api/films/public/{filmId}/reviews/invitationStatus:
+    get:
+      tags:
+        - "films/public/{filmId}/reviews/invitationStatus"
+      summary:
+        "Retrieve the invitationStatus for all reviews that has been issued/completed\
+        \ for a film, possibly filtered"
+      description:
+        The invitationStatus for all the reviews of the film with ID filmID
+        are retrieved. This operation can only be executed by the authenticated film
+        owner.
+      operationId: getReviewsInvitationStatus
+      parameters:
+        - name: filmId
+          in: path
+          description: ID of the film whose reviews must be retrieved
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: invitationStatus
+          in: query
+          description:
+            "The invitation Status used to filter the reviews (if absent,\
+            \ all reviews are considered). This query parameter only has effect for\
+            \ the film owner."
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            enum:
+              - PENDING
+              - ACCEPTED
+              - REFUSED
+        - name: pageNo
+          in: query
+          description: "ID of the requested page (if absent, the first page is returned)'"
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_2"
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      security:
+        - cookieAuth: []
+      x-swagger-router-controller: FilmspublicfilmIdreviewsinvitationStatus
   /api/films/public/{filmId}/reviews/{reviewerId}:
     get:
       tags:
         - "films/public/{filmId}/reviews/{reviewerId}"
       summary: Retrieve a review that has been issued/completed for a film
       description:
-        "The review of the film with ID filmID issued to the user with
-        ID reviewerId is retrieved. This operation does not require authentication. "
+        "The review of the film with ID filmID issued to the user with\
+        \ ID reviewerId is retrieved. This operation does not require authentication.\
+        \ If it is called by the authenticated owner or reviewer, it also returns\
+        \ the invitationStatus of the review."
       operationId: getSingleReview
       parameters:
         - name: filmId
@@ -569,7 +678,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Review"
+                $ref: "#/components/schemas/inline_response_200_3"
         "404":
           description: Not Found
           content: {}
@@ -612,7 +721,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/reviews_reviewerId_body"
+              $ref: "#/components/schemas/Review_public"
       responses:
         "204":
           description: No Content
@@ -682,38 +791,121 @@ paths:
       security:
         - cookieAuth: []
       x-swagger-router-controller: FilmspublicfilmIdreviewsreviewerId
-  /api/films/public/assignments:
-    post:
+    patch:
       tags:
-        - films/public/assignments
-      summary:
-        Assign automatically review invitations for the unassigned public films
-        owned by the authenticated user in a balanced manner
+        - "films/public/{filmId}/reviews/{reviewerId}"
+      summary: Change invitation Status of a review
       description:
-        "The films owned by the authenticated user who performed the request\
-        \ and that are not assigned to any user for review, are automatically assigned\
-        \ to the users of the service in a balanced manner. Only authenticated users\
-        \ can make this request."
-      operationId: assignReviewBalanced
+        Change the invitation Status of the review of the film with ID
+        filmId and issued to the user with ID reviewerId. This operation allows setting
+        the "invitationStatus" property of a "PENDING" review to "ACCEPTED" or "REFUSED".
+        This operation can be performed only by the invited reviewer.
+      operationId: updateSingleReviewInvitationStatus
+      parameters:
+        - name: filmId
+          in: path
+          description: ID of the film whose review must be completed
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: reviewerId
+          in: path
+          description: ID of the user to whom the review has been issued
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: The properties of the Review object that must be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Review_invitationStatus"
       responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/inline_response_200_2"
-                x-content-type: application/json
+        "204":
+          description: No Content
+          content: {}
+        "400":
+          description: Bad Request
+          content: {}
         "401":
           description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "409":
+          description:
+            "Conflict (attempt to make unallowed change from ACCEPTED/REFUSED\
+            \ review, or to PENDING)"
           content: {}
         "500":
           description: Internal Server Error
           content: {}
       security:
         - cookieAuth: []
-      x-swagger-router-controller: Filmspublicassignments
+      x-swagger-router-controller: FilmspublicfilmIdreviewsreviewerId
+  /api/films/public/{filmId}/reviews/{reviewerId}/invitationStatus:
+    get:
+      tags:
+        - "films/public/{filmId}/reviews/{reviewerId}/invitationStatus"
+      summary:
+        Retrieve the invitationStatus for a review that has been issued/completed
+        for a film
+      description:
+        The invitationStatus for the review of the film with ID filmID
+        issued to the user with ID reviewerId is retrieved. This operation can only
+        be executed by the authenticated film owner or reviewer.
+      operationId: getSingleReviewInvitationStatus
+      parameters:
+        - name: filmId
+          in: path
+          description: ID of the film whose reviews must be retrieved
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: reviewerId
+          in: path
+          description: ID of the user to whom the review has been issued
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review_invitationStatus"
+        "401":
+          description: Unauthorized
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      security:
+        - cookieAuth: []
+      x-swagger-router-controller: FilmspublicfilmIdreviewsreviewerIdinvitationStatus
   /api/users:
     get:
       tags:
@@ -918,8 +1110,62 @@ components:
         id: 0
         title: title
         favorite: false
-    Review:
+    Review_full:
       required:
+        - completed
+        - filmId
+        - reviewerId
+      type: object
+      properties:
+        $schema:
+          type: string
+          description:
+            path to the JSON Schema to use for the validation of the JSON
+            data structure describing the film
+        filmId:
+          type: integer
+          description:
+            unique identifier of the film for which a review invitation
+            has been issued
+        reviewerId:
+          type: integer
+          description: unique identifier of the user who has received the review invitation
+        completed:
+          type: boolean
+          description: "true if the review has been completed, false otherwise"
+          default: false
+        reviewDate:
+          type: string
+          description:
+            the date when the review has been completed by the invited
+            user
+          format: date
+        rating:
+          maximum: 10
+          minimum: 1
+          type: integer
+          description: the rating the reviewer has given to the film
+        review:
+          maxLength: 1000
+          type: string
+          description: a textual description of the review
+        invitationStatus:
+          type: string
+          description: status of the review invitation
+          enum:
+            - PENDING
+            - ACCEPTED
+            - REFUSED
+        self:
+          type: string
+          format: uri
+      additionalProperties: false
+      description:
+        schema for full Review data structures including invitationStatus.
+        Only visible by film owner and reviewer
+    Review_public:
+      required:
+        - completed
         - filmId
         - reviewerId
       type: object
@@ -960,16 +1206,70 @@ components:
           type: string
           format: uri
       additionalProperties: false
-      description: schema for Review data structures
+      description:
+        "schema for Review data structures, as seen by not logged users\
+        \ or logged users which are not film owner or reviewer, so without the invitationStatus"
+    Review_post:
+      required:
+        - filmId
+        - reviewerId
+      type: object
+      properties:
+        $schema:
+          type: string
+          description:
+            path to the JSON Schema to use for the validation of the JSON
+            data structure describing the film
+        filmId:
+          type: integer
+          description:
+            unique identifier of the film for which a review invitation
+            has been issued
+        reviewerId:
+          type: integer
+          description: unique identifier of the user who has received the review invitation
+      additionalProperties: false
+      description:
+        Optimized JSON Schema to represent just the relevant Review fields
+        when it needs to be created by the film owner
+    Review_invitationStatus:
+      required:
+        - filmId
+        - invitationStatus
+        - reviewerId
+      type: object
+      properties:
+        $schema:
+          type: string
+          description:
+            path to the JSON Schema to use for the validation of the JSON
+            data structure describing the film
+        filmId:
+          type: integer
+          description:
+            unique identifier of the film for which a review invitation
+            has been issued
+        reviewerId:
+          type: integer
+          description: unique identifier of the user who has received the review invitation
+        invitationStatus:
+          type: string
+          description: status of the review invitation
+          enum:
+            - PENDING
+            - ACCEPTED
+            - REFUSED
+        self:
+          type: string
+          format: uri
+      additionalProperties: false
+      description: JSON Schema for the invitation status of a Review
       example:
         reviewerId: 5
         $schema: $schema
-        reviewDate: 2000-01-23
-        review: review
         filmId: 5
-        rating: 3
         self: http://example.com/aeiou
-        completed: false
+        invitationStatus: "PENDING"
     inline_response_200:
       type: object
       properties:
@@ -1022,7 +1322,48 @@ components:
         reviews:
           type: array
           items:
-            $ref: "#/components/schemas/Review"
+            oneOf:
+              - $ref: "#/components/schemas/Review_full"
+              - $ref: "#/components/schemas/Review_public"
+        next:
+          type: string
+          format: uri
+      example:
+        next: http://example.com/aeiou
+        totalItems: 1
+        reviews:
+          - ""
+          - ""
+        totalPages: 0
+        currentPage: 6
+    inline_response_207:
+      type: object
+      properties:
+        responseStatus:
+          type: integer
+        content:
+          oneOf:
+            - $ref: "#/components/schemas/Review_full"
+            - type: object
+              properties:
+                error:
+                  type: string
+      example:
+        responseStatus: 0
+        content: ""
+    inline_response_200_2:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+        currentPage:
+          type: integer
+        totalItems:
+          type: integer
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review_invitationStatus"
         next:
           type: string
           format: uri
@@ -1032,53 +1373,20 @@ components:
         reviews:
           - reviewerId: 5
             $schema: $schema
-            reviewDate: 2000-01-23
-            review: review
             filmId: 5
-            rating: 3
             self: http://example.com/aeiou
-            completed: false
+            invitationStatus: "PENDING"
           - reviewerId: 5
             $schema: $schema
-            reviewDate: 2000-01-23
-            review: review
             filmId: 5
-            rating: 3
             self: http://example.com/aeiou
-            completed: false
+            invitationStatus: "PENDING"
         totalPages: 0
         currentPage: 6
-    reviews_reviewerId_body:
-      type: object
-      properties:
-        completed:
-          type: boolean
-          default: true
-        reviewDate:
-          type: string
-          description:
-            the date when the review has been completed by the invited
-            user
-          format: date
-        rating:
-          maximum: 10
-          minimum: 1
-          type: integer
-          description: the rating the reviewer has given to the film
-        review:
-          maxLength: 1000
-          type: string
-          description: a textual description of the review
-      additionalProperties: false
-    inline_response_200_2:
-      properties:
-        filmId:
-          type: integer
-        reviewerId:
-          type: integer
-      example:
-        reviewerId: 6
-        filmId: 0
+    inline_response_200_3:
+      oneOf:
+        - $ref: "#/components/schemas/Review_full"
+        - $ref: "#/components/schemas/Review_public"
   securitySchemes:
     cookieAuth:
       type: apiKey
