@@ -7,14 +7,27 @@ The structure of this repository is the following:
   - "REST APIs Design" contains the full Open API documentation of the REST APIs (both in .json and .yaml format) and a Postman collection with a complete example of invocations of the API operations.
   - "REST APIs Implementation" contains the code of the Film Manager service application.
 
-# How to run the code from scratch
-```
-
+# How to run the server
+```shell
+git clone git@github.com:polito-DSP-2022-23/exam-call-3-b3xul.git
+cd exam-call-3-b3xul/REST\ APIs\ Implementation/
+npm install
+npm start
 ```
 
 # Main use cases
+To execute the following workflow, just import into Postman the file `REST APIs Design/ExamFilmManager Main Use Cases Run.postman_collection.json` and run the collection.
 
-## Part 1
+Each request includes a pre-request script that stores its own expected response in an environment variable. These responses are then compared with the responses actually received using a Test script common for all requests.
+
+In the first run of the collection all tests should pass.
+If the collection is run again, since the status of the database changed, some tests won't pass anymore, because instead of the expected response now the appropriate error messages will be returned.
+
+To restore the inital database status it is sufficient to manually delete reviews with (filmId=3,reviewerId=5) and (filmId=3,reviewerId=6) from the database.
+
+The file `REST APIs Design/ExamFilmManager Additional requests.postman_collection.json` contains a second Postman collection with more operations invocations, to show how the requirements where satisfied, and the handling of some errors.
+
+## workflow
 ```mermaid
 sequenceDiagram
     autonumber
@@ -52,7 +65,7 @@ sequenceDiagram
     Rid->>Rev: 204
     
 ```
-## Part 2
+## continuation
 ```mermaid
 sequenceDiagram
     autonumber

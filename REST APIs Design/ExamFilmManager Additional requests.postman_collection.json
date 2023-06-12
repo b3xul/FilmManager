@@ -1,0 +1,1187 @@
+{
+	"info": {
+		"_postman_id": "91287510-ec44-43a0-932c-a44e7ee9e944",
+		"name": "ExamFilmManager Additional requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27536989"
+	},
+	"item": [
+		{
+			"name": "Logged-in Owner (user 1)",
+			"item": [
+				{
+					"name": "films/public/3/reviews",
+					"item": [
+						{
+							"name": "create multiple review invitations with different return status",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"filmId\": 3,\n        \"reviewerId\": 2\n    },\n    {\n        \"filmId\": 3,\n        \"reviewerId\": 3\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/3/reviews",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"3",
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read ACCEPTED reviews for public film",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/3/reviews?invitationStatus=ACCEPTED",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"3",
+										"reviews"
+									],
+									"query": [
+										{
+											"key": "invitationStatus",
+											"value": "ACCEPTED"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "films/public/3/reviews/5",
+					"item": [
+						{
+							"name": "Read review for public film",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/3/reviews/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"3",
+										"reviews",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete review for public film error",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/3/reviews/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"3",
+										"reviews",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete review for public film",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invitation status of review for public film unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/2/reviews/2/invitationStatus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"2",
+								"reviews",
+								"2",
+								"invitationStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invitation status of ACCEPTED reviews for public film pageNo 2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/invitationStatus?invitationStatus=ACCEPTED&pageNo=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"invitationStatus"
+							],
+							"query": [
+								{
+									"key": "invitationStatus",
+									"value": "ACCEPTED"
+								},
+								{
+									"key": "pageNo",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Trigger login request to obtain a new token",
+							"const options = {",
+							"    url: \"http://localhost:3001/api/users/authenticator?type=login\",",
+							"    method: 'POST',",
+							"    header: { 'content-type': 'application/json' },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            \"email\": \"user.dsp@polito.it\",",
+							"            \"password\": \"password\"",
+							"        })",
+							"    }",
+							"};",
+							"",
+							"pm.sendRequest(options, (err, response) => {",
+							"    if (err) {",
+							"        console.error(err);",
+							"    } else {",
+							"        var setCookieHeader = response.headers.get('Set-Cookie');",
+							"        if (setCookieHeader) {",
+							"            var match = setCookieHeader.match(/connect\\.sid=([^;]+)/);",
+							"            if (match && match.length > 1) {",
+							"                var connectSid = match[1];",
+							"                console.log(\"Received cookie with connectSid=\"+connectSid)",
+							"                //pm.environment.set('connect_sid', connectSid);",
+							"            }",
+							"        }",
+							"    }",
+							"});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Logged-in Reviewer (user 5)",
+			"item": [
+				{
+					"name": "films/public/invited",
+					"item": [
+						{
+							"name": "Read all invited films",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/invited",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"invited"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read pending invited films",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/invited?invitationStatus=PENDING",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"invited"
+									],
+									"query": [
+										{
+											"key": "invitationStatus",
+											"value": "PENDING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read accepted invited films page 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/invited?invitationStatus=ACCEPTED&pageNo=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"invited"
+									],
+									"query": [
+										{
+											"key": "invitationStatus",
+											"value": "ACCEPTED"
+										},
+										{
+											"key": "pageNo",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read refused invited films (empty)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/invited?invitationStatus=REFUSED",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"invited"
+									],
+									"query": [
+										{
+											"key": "invitationStatus",
+											"value": "REFUSED"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read invited films bad parameter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/films/public/invited?invitationStatus=\"WRONGPARAM\"",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"films",
+										"public",
+										"invited"
+									],
+									"query": [
+										{
+											"key": "invitationStatus",
+											"value": "\"WRONGPARAM\""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Read own review for public film (invitationStatus present)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read other review for public film (invitationStatus not present)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update review for public film bad format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filmId\": 3, \n    \"reviewerId\": 5, \n    \"completed\": false, \n    \"reviewDate\": \"2022-01-11\", \n    \"rating\": 6, \n    \"review\": \"Film carino.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update invitation Status for review for public film error unallowed state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filmId\": 6,\n    \"reviewerId\": 5,\n    \"invitationStatus\": \"PENDING\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/6/reviews/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"6",
+								"reviews",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update invitation Status for review for public film error already accepted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filmId\": 2,\n    \"reviewerId\": 5,\n    \"invitationStatus\": \"ACCEPTED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/2/reviews/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"2",
+								"reviews",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update invitation Status for review for public film error conflict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filmId\": 2,\n    \"reviewerId\": 4,\n    \"invitationStatus\": \"ACCEPTED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/2/reviews/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"2",
+								"reviews",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invitation status of review for public film",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/5/invitationStatus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"5",
+								"invitationStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invitation status of all reviews for public film error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/invitationStatus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"invitationStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read all reviews for public film (filter doesn't have effect)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews?invitationStatus=PENDING",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "invitationStatus",
+									"value": "PENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const options = {",
+							"    url: \"http://localhost:3001/api/users/authenticator?type=login\",",
+							"    method: 'POST',",
+							"    header: { 'content-type': 'application/json' },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            \"email\": \"beatrice.golden@polito.it\",",
+							"            \"password\": \"seagulls\"",
+							"        })",
+							"    }",
+							"};",
+							"",
+							"pm.sendRequest(options, (err, response) => {",
+							"    if (err) {",
+							"        console.error(err);",
+							"    } else {",
+							"        var setCookieHeader = response.headers.get('Set-Cookie');",
+							"        if (setCookieHeader) {",
+							"            var match = setCookieHeader.match(/connect\\.sid=([^;]+)/);",
+							"            if (match && match.length > 1) {",
+							"                var connectSid = match[1];",
+							"                console.log(\"Received cookie with connectSid=\"+connectSid)",
+							"                //pm.environment.set('connect_sid', connectSid);",
+							"            }",
+							"        }",
+							"    }",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Not Logged User",
+			"item": [
+				{
+					"name": "User logs out",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/users/authenticator?type=logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"users",
+								"authenticator"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "logout"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invited films unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/invited",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"invited"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invitation status of review for public film unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/5/invitationStatus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"5",
+								"invitationStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read invitation status of all reviews for public film unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews/invitationStatus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews",
+								"invitationStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read all reviews for public film (filter doesn't have effect)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/api/films/public/3/reviews?invitationStatus=PENDING",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"films",
+								"public",
+								"3",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "invitationStatus",
+									"value": "PENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
